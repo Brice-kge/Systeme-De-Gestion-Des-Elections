@@ -14,3 +14,165 @@ datasource db {
   url      = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
+
+
+
+enum Role {
+  ELECTEUR
+  ADMIN
+  SUPER_ADMIN
+  OBSERVATEUR
+}
+
+enum StatutElection {
+  CREATED
+  OPEN
+  CLOSED
+  PUBLISHED
+}
+
+enum StatutInscription {
+  EN_ATTENTE
+  VALIDE
+  REJETE
+}
+
+
+
+model Utilisateur {
+  id           String   @id @default(uuid())
+  nom          String
+  prenom       String
+  email        String   @unique
+  motDePasse   String
+  telephone    String   @unique
+  matricule    String  @default("")
+  role         Role
+
+  institutions Institution?
+
+
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  
+  electionId   String
+  election     Election? @relation(fields: [electionId], references: [id])
+
+  votes        Vote[]
+
+  inscriptionId String
+  inscription   Inscription @relation(fields: [inscriptionId], references: [id])
+
+  @@unique([matricule, institutionId])
+}
+
+
+
+model Institution {
+  id        String   @id @default(uuid())
+  nom       String
+  type      String
+  pays      String
+  email     String
+  telephone String
+
+  utilisateurid String @unique
+
+  utilisateurs Utilisateur[]
+
+  electionId String
+  election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+}
+
+
+
+model Election {
+  id            String   @id @default(uuid())
+  titre         String
+  description   String?
+  dateDebut     DateTime
+  dateFin       DateTime
+  statut        StatutElection
+
+  utilisateurs Utilisateur[] 
+
+  institutions Institution[]
+
+  candidatid String
+  candidat   Candidat @relation(fields: [candidatid], references: [id], onDelete: Cascade)
+
+  inscriptionid String
+  inscription   Inscription @relation(fields: [inscriptionid], references: [id])
+
+  voteid       String
+  vote         Vote @relation(fields: [voteid], references: [id], onDelete: Cascade)
+
+  resultat      Resultat?
+}
+
+
+
+model Candidat {
+  id          String @id @default(uuid())
+  nom         String
+  prenom      String
+  programme   String?
+  photo       String?
+
+  elections Election[]
+
+  voteid      String
+  vote        Vote @relation(fields: [voteid], references: [id])
+
+  resultats Resultat[]
+}
+
+
+
+model Inscription {
+  id              String   @id @default(uuid())
+  dateInscription DateTime @default(now())
+  statut          StatutInscription
+
+  utilisateurs Utilisateur[]
+  elections Election[]
+  
+}
+
+
+
+model Vote {
+  id          String   @id @default(uuid())
+  dateVote    DateTime @default(now())
+
+  electeurId  String
+  candidatId  String
+   
+  utilisateurId String
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id]) 
+  
+  candidats Candidat[]
+  elections Election[]
+
+}
+
+
+
+model Resultat {
+  id                String   @id @default(uuid())
+  totalVotes        Int
+  tauxParticipation Float?
+
+  electionId        String   @unique
+  
+  candidatid String
+  candidat   Candidat @relation(fields: [candidatid], references: [id])
+}
+
+
+
+
+
+
+
+
