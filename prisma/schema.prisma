@@ -163,7 +163,7 @@ model Resultat {
   tauxParticipation Float
 
   electionId        String   @unique
-  election          Election @relation(fields: [electionId], references: [id])
+  election          Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
   
   candidatid String
   candidat   Candidat @relation(fields: [candidatid], references: [id])
