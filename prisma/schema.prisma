@@ -49,11 +49,11 @@ model Utilisateur {
   matricule    String  @default("")
   role         Role
 
-  institutionsId Institution?
+  institutionsId Institution? @relation("AdministrateurInstitution")
 
 
   institutionId String
-  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  institution   Institution @relation("SuperAdminInstitution",fields: [institutionId], references: [id], onDelete: Cascade)
   
   electionId   String
   election     Election @relation(fields: [electionId], references: [id])
@@ -77,9 +77,9 @@ model Institution {
   telephone String
 
   utilisateurid String @unique
-  utilisateur   Utilisateur @relation(fields: [utilisateurid], references: [id], onDelete: Cascade)
+  utilisateur   Utilisateur @relation("AdministrateurInstitution",fields: [utilisateurid], references: [id], onDelete: Cascade)
 
-  utilisateurs Utilisateur[]
+  utilisateurs Utilisateur[] @relation("SuperAdminInstitution")
 
   electionId String
   election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
