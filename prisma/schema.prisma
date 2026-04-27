@@ -146,9 +146,7 @@ model Vote {
   id          String   @id @default(uuid())
   dateVote    DateTime @default(now())
 
-  electeurId  String
-  candidatId  String
-   
+ 
   utilisateurId String
   utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id]) 
   
