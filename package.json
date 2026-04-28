@@ -20,7 +20,8 @@
     "db:studio": "prisma studio",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
-    "supabase:status": "supabase status"
+    "supabase:status": "supabase status",
+    "seed": "npx ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
